@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .event-box {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .event-box h2 {
+      color: #007bff;
+    }
+
+    .event-box img {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 20px;
+      max-height: 400px;
+      object-fit: cover;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .category-tag {
+      display: inline-block;
+      background-color: #e0e0e0;
+      color: #333;
+      font-size: 0.85em;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="student.html">&larr; Back to Events</a>
+  <div id="eventDetails" class="event-box">Loading...</div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventTitle = urlParams.get('title');
+
+    const events = [
+      {
+        title: 'Hackowasp',
+        desc: 'It is a 36 hours hackathon happening on 20th April and it is open for all developers.',
+        date: '2025-04-20',
+        location: 'TAN Building',
+        category: 'hackathon',
+        image: 'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*-kQgUGcM2ijFli0lpjfuGQ.jpeg'
+      },
+      {
+        title: 'Tech Fest',
+        desc: 'An amazing tech event with workshops and innovation talks.',
+        date: '2025-04-25',
+        location: 'Main Auditorium',
+        category: 'tech',
+        image: 'https://miro.medium.com/v2/resize:fit:1200/1*CT3ocHxVkkpL2f8Mif_9Wg.png'
+      },
+      {
+        title: 'Stand-up Night',
+        desc: 'Laugh out loud with the funniest comedians in town.',
+        date: '2025-04-18',
+        location: 'Auditorium B',
+        category: 'comedy',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7sKPfIg4eHaRJdmPB6d__4uZyQsN8vR1rGw&usqp=CAU'
+      },
+      {
+        title: 'Web Dev Workshop',
+        desc: 'Learn full stack development in just 3 hours!',
+        date: '2025-04-30',
+        location: 'Lab 5',
+        category: 'workshop',
+        image: 'https://assets.materialup.com/uploads/e6fdbc2d-bc12-4be6-933c-2635fd01e86e/preview.png'
+      }
+    ];
+
+    const event = events.find(e => e.title === eventTitle);
+
+    const box = document.getElementById('eventDetails');
+    if (event) {
+      box.innerHTML = `
+        <h2>${event.title}</h2>
+        <div class="category-tag">${event.category}</div>
+        <p><strong>Date:</strong> ${event.date}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+        <p style="margin-top:10px;">${event.desc}</p>
+        <img src="${event.image}" alt="${event.title}">
+      `;
+    } else {
+      box.innerHTML = "<p>Event not found.</p>";
+    }
+  </script>
+</body>
+</html>

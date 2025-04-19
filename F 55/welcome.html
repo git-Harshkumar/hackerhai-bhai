@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to EventHub</title>
+  <style>
+   body {
+  margin: 0;
+  padding: 0;
+  background: url('images/background.png') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+  text-align: center;
+}
+
+
+    .background-section {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: -1;
+      background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.25; /* Adjust to make content more visible */
+    }
+
+    h1 {
+      font-size: 3em;
+      opacity: 0;
+      animation: fadeIn 2s forwards, scaleUp 1.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scaleUp {
+      0% {
+        transform: scale(0.8);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    #logo {
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      animation: rotateLogo 2s ease-in-out;
+    }
+
+    @keyframes rotateLogo {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .quote {
+      font-size: 1.2em;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeIn 3s forwards;
+    }
+
+    .countdown {
+      margin-top: 30px;
+      font-size: 1.5em;
+    }
+
+    h1:hover {
+      color: #ff6347;
+      transform: scale(1.1);
+    }
+
+    .skip-btn {
+      margin-top: 50px;
+      padding: 10px 20px;
+      background-color: #c38616;
+      color: #764ba2;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+
+    }
+  </style>
+  <script>
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 3000);
+
+    const countdownDate = new Date().getTime() + 3000;
+    const countdownElement = document.getElementById('countdown');
+    setInterval(function() {
+      const now = new Date().getTime();
+      const distance = countdownDate - now;
+      if (distance < 0) {
+        countdownElement.innerHTML = "Redirecting now!";
+      } else {
+        countdownElement.innerHTML = `Redirecting in: ${Math.floor(distance / 1000)}s`;
+      }
+    }, 1000);
+
+    const quotes = [
+      "The best way to predict the future is to create it.",
+      "Innovation distinguishes between a leader and a follower.",
+      "The only limit to our realization of tomorrow is our doubts of today."
+    ];
+    document.addEventListener('DOMContentLoaded', () => {
+      const quoteElement = document.getElementById('quote');
+      quoteElement.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+    });
+  </script>
+</head>
+<body>
+  <!-- 🌄 Background Image -->
+  <div class="background-section"></div>
+
+  <!-- 🔥 Main Content -->
+  <div id="logo"></div>
+  <h1>Welcome to EventHub</h1>
+  <p class="quote" id="quote"></p>
+  <div class="countdown" id="countdown">Redirecting in: 3s</div>
+  <button class="skip-btn" onclick="window.location.href = 'index.html'">Skip</button>
+</body>
+</html>

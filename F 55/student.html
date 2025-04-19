@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EventHub | Student</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ebc75273;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    body.dark-mode {
+      background: #1f1f1f;
+      color: #e0e0e0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.8em;
+      margin-bottom: 30px;
+    }
+
+    .dark-mode h1 {
+      color: #fff;
+    }
+
+    .search-filter {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    input[type="text"], select {
+      padding: 12px;
+      width: 48%;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body.dark-mode input[type="text"], 
+    body.dark-mode select {
+      background-color: #2c2c2c;
+      color: #fff;
+      border: 1px solid #555;
+    }
+
+    .event {
+      perspective: 1000px;
+      margin: 20px 0;
+      cursor: pointer; /* Make event box clickable */
+    }
+
+    .event .event-inner {
+      position: relative;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.7s ease-in-out;
+    }
+
+    .event:hover .event-inner {
+      transform: rotateY(5deg);
+    }
+
+    .event-front {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      backface-visibility: hidden;
+    }
+
+    body.dark-mode .event-front {
+      background: #2a2a2a;
+    }
+
+    .event-front h3 {
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+
+    .event-front p {
+      margin: 5px 0;
+    }
+
+    .event-front img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+
+    .timer {
+      font-size: 16px;
+      font-weight: bold;
+      color: #28a745;
+      margin-top: 10px;
+    }
+
+    .like-btn {
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+    }
+
+    .like-btn.liked {
+      background-color: #28a745;
+    }
+
+    #calendarWrapper {
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      max-width: 600px;
+      display: flex;
+      justify-content: center;
+      background-color: #c5cfd1a2;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    body.dark-mode #calendarWrapper {
+      background-color: #2a2a2a;
+      border-color: #555;
+    }
+
+    .highlight-event {
+      background-color: #007bff !important;
+      color: white !important;
+      border-radius: 50%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #darkModeToggle {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      background-color: #dcc08d;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 25px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 1000;
+      transition: background-color 0.3s ease;
+    }
+
+    #darkModeToggle:hover {
+      background-color: #0056b3;
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css" rel="stylesheet">
+</head>
+<body>
+ 
+
+  <button id="darkModeToggle">Dark Mode 🌙</button>
+  <h1>Upcoming Events</h1>
+
+  <div class="search-filter">
+    <input type="text" id="searchBox" placeholder="Search events...">
+    <select id="categoryFilter">
+      <option value="all">All Categories</option>
+      <option value="tech">Tech</option>
+      <option value="comedy">Comedy</option>
+      <option value="workshop">Workshop</option>
+      <option value="hackathon">Hackathon</option>
+    </select>
+  </div>
+
+  <div id="calendarWrapper">
+    <div id="calendar" data-date-format="yyyy-mm-dd"></div>
+  </div>
+
+  <div id="eventFeed"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker.min.js"></script>
+  <script>
+    const events = [
+      {
+        title: 'Hackowasp',
+        desc: '36-hour hackathon happening on 20th April open for all developers.',
+        date: '2025-04-20',
+        location: 'TAN Building',
+        category: 'hackathon',
+        image: 'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*-kQgUGcM2ijFli0lpjfuGQ.jpeg'
+      },
+      {
+        title: 'Tech Fest',
+        desc: 'An amazing tech event with workshops and innovation talks.',
+        date: '2025-04-25',
+        location: 'Main Auditorium',
+        category: 'tech',
+        image: 'https://miro.medium.com/v2/resize:fit:1200/1*CT3ocHxVkkpL2f8Mif_9Wg.png'
+      },
+      {
+        title: 'Stand-up Night',
+        desc: 'Laugh out loud with the funniest comedians in town.',
+        date: '2025-04-18',
+        location: 'Auditorium B',
+        category: 'comedy',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7sKPfIg4eHaRJdmPB6d__4uZyQsN8vR1rGw&usqp=CAU'
+      },
+      {
+        title: 'Web Dev Workshop',
+        desc: 'Learn full stack development in just 3 hours!',
+        date: '2025-04-30',
+        location: 'Lab 5',
+        category: 'workshop',
+        image: 'https://assets.materialup.com/uploads/e6fdbc2d-bc12-4be6-933c-2635fd01e86e/preview.png'
+      }
+    ];
+
+    let likedEvents = JSON.parse(localStorage.getItem('likedEvents')) || [];
+
+    const feed = document.getElementById('eventFeed');
+    const searchBox = document.getElementById('searchBox');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const calendarEl = document.getElementById('calendar');
+    const toggleBtn = document.getElementById('darkModeToggle');
+
+    const dp = new Datepicker(calendarEl, { autohide: true });
+
+    function highlightEventDates() {
+      const dates = events.map(e => e.date);
+      setTimeout(() => {
+        document.querySelectorAll('.datepicker-cell').forEach(cell => {
+          const date = cell.getAttribute('data-date');
+          if (date && dates.includes(date)) {
+            cell.classList.add('highlight-event');
+          }
+        });
+      }, 300);
+    }
+
+    function calculateTimeLeft(eventDate) {
+      const eventTime = new Date(eventDate).getTime();
+      const currentTime = new Date().getTime();
+      const timeLeft = eventTime - currentTime;
+
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+      return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    function toggleLike(eventTitle) {
+      const index = likedEvents.indexOf(eventTitle);
+      if (index > -1) {
+        likedEvents.splice(index, 1); // Remove event from liked list
+      } else {
+        likedEvents.push(eventTitle); // Add event to liked list
+      }
+      localStorage.setItem('likedEvents', JSON.stringify(likedEvents)); // Store liked events in localStorage
+      displayEvents(); // Re-render events
+    }
+
+    function displayEvents(filterFn = () => true) {
+      feed.innerHTML = '';
+      const filtered = events.filter(filterFn);
+      if (filtered.length === 0) {
+        feed.innerHTML = '<p>No events found.</p>';
+        return;
+      }
+
+      filtered.forEach(event => {
+        const timeLeft = calculateTimeLeft(event.date);
+        const isLiked = likedEvents.includes(event.title);
+
+        feed.innerHTML += `
+          <div class="event" onclick="window.location.href='event-details.html?title=${encodeURIComponent(event.title)}'">
+            <div class="event-inner">
+              <div class="event-front">
+                <h3>${event.title}</h3>
+                <p><strong>Date:</strong> ${event.date}</p>
+                <p><strong>Location:</strong> ${event.location}</p>
+                <p>${event.desc}</p>
+                <p class="timer">Time left: ${timeLeft}</p>
+                <img src="${event.image}" alt="${event.title}">
+                <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${event.title}'); event.stopPropagation();">
+                  ${isLiked ? 'Liked' : 'Like'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function filterAndDisplay() {
+      const searchText = searchBox.value.toLowerCase();
+      const selectedCategory = categoryFilter.value;
+      displayEvents(e =>
+        e.title.toLowerCase().includes(searchText) &&
+        (selectedCategory === 'all' || e.category === selectedCategory)
+      );
+    }
+
+    calendarEl.addEventListener('changeDate', (e) => {
+      const selectedDate = e.detail.date.toISOString().split('T')[0];
+      displayEvents(ev => ev.date === selectedDate);
+    });
+
+    window.onload = () => {
+      displayEvents();
+      highlightEventDates();
+
+      // Load dark mode preference
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+    };
+
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    });
+
+    searchBox.addEventListener('input', filterAndDisplay);
+    categoryFilter.addEventListener('change', filterAndDisplay);
+  </script>
+   <button onclick="window.location.href='liked-events.html'" style="
+   margin: 20px auto;
+   display: block;
+   padding: 10px 20px;
+   font-size: 16px;
+   background-color: #ff620046;
+   color: white;
+   border: none;
+   border-radius: 8px;
+   cursor: pointer;
+   transition: background-color 0.2s ease-in-out;
+ ">
+   Liked Events❤️ 
+ </button>
+</body>
+</html>
